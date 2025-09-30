@@ -1,0 +1,6 @@
+#IMAGE_INSTALL_append = " helloworld"
+IMAGE_INSTALL:append = " helloworld"
+IMAGE_INSTALL:append = " helloworld2"
+IMAGE_INSTALL:append = " hellocmake"
+IMAGE_INSTALL:append = " helloauto"
+IMAGE_INSTALL:append = " helloauto2"
