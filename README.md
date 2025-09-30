@@ -1683,22 +1683,303 @@ runqemu qemux86-64 tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.wic
 
 
 
+---
+# 创建,安装,使用 SDK
+
+
+## 创建 SDK
+```
+$ source oe-init-build-env                      # to build folder
+$ export http_proxy="127.0.0.1:8118"            # 要下载
+$ export https_proxy="127.0.0.1:8118"
+
+
+$ bitbake core-image-sato -c populate_sdk       # 标准SDK, 目前就看这个
+
+$ bitbake core-image-sato -c populate_sdk_ext   # 扩展SDK
+```
+
+创建的SDK安装包在 `build/tmp/deploy/sdk`
+```
+$ tree
+.
+├── poky-glibc-x86_64-core-image-sato-x86-64-v3-qemux86-64-toolchain-5.2.99+snapshot.host.manifest
+├── poky-glibc-x86_64-core-image-sato-x86-64-v3-qemux86-64-toolchain-5.2.99+snapshot.sh
+├── poky-glibc-x86_64-core-image-sato-x86-64-v3-qemux86-64-toolchain-5.2.99+snapshot.spdx.json
+├── poky-glibc-x86_64-core-image-sato-x86-64-v3-qemux86-64-toolchain-5.2.99+snapshot.target.manifest
+└── poky-glibc-x86_64-core-image-sato-x86-64-v3-qemux86-64-toolchain-5.2.99+snapshot.testdata.json
+```
+
+如果要重新生成
+```
+bitbake -c clean core-image-sato
+bitbake -c populate_sdk core-image-sato
+```
+
+## 安装SDK, 先`unset LD_LIBRARY_PATH`
+```
+
+$ ./poky-glibc-x86_64-core-image-sato-x86-64-v3-qemux86-64-toolchain-5.2.99+snapshot.sh 
+Poky (Yocto Project Reference Distro) SDK installer version 5.2.99+snapshot
+===========================================================================
+Enter target directory for SDK (default: /opt/poky/5.2.99+snapshot): 
+You are about to install the SDK to "/opt/poky/5.2.99+snapshot". Proceed [Y/n]? y
+Extracting SDK..........................................................................................................................................................................................done
+Setting it up...done
+Your environment is misconfigured, you probably need to 'unset LD_LIBRARY_PATH'
+but please check why this was set in the first place and that it's safe to unset.
+The SDK will not operate correctly in most cases when LD_LIBRARY_PATH is set.
+For more references see:
+  http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html#AEN80
+  http://xahlee.info/UnixResource_dir/_/ldpath.html
+/opt/poky/5.2.99+snapshot/post-relocate-setup.sh: Failed to source /opt/poky/5.2.99+snapshot/environment-setup-x86-64-v3-poky-linux with status 1
+Executing /opt/poky/5.2.99+snapshot/post-relocate-setup.sh failed
+
+
+$ unset LD_LIBRARY_PATH
+
+$ ./poky-glibc-x86_64-core-image-sato-x86-64-v3-qemux86-64-toolchain-5.2.99+snapshot.sh 
+Poky (Yocto Project Reference Distro) SDK installer version 5.2.99+snapshot
+===========================================================================
+Enter target directory for SDK (default: /opt/poky/5.2.99+snapshot): 
+You are about to install the SDK to "/opt/poky/5.2.99+snapshot". Proceed [Y/n]? y
+Extracting SDK..........................................................................................................................................................................................done
+Setting it up...done
+SDK has been successfully set up and is ready to be used.
+Each time you wish to use the SDK in a new shell session, you need to source the environment setup script e.g.
+ $ . /opt/poky/5.2.99+snapshot/environment-setup-x86-64-v3-poky-linux
+```
+
+
+## 加载SDK环境变量, 先`unset LD_LIBRARY_PATH`
+```
+unset LD_LIBRARY_PATH
+source /opt/poky/5.2.99+snapshot/environment-setup-x86-64-v3-poky-linux
+```
+
+
+
+## SDK环境的编译器用$CC
+
+CC版本
+
+```
+$ $CC -v
+Using built-in specs.
+COLLECT_GCC=x86_64-poky-linux-gcc
+COLLECT_LTO_WRAPPER=/opt-shadow/poky/5.2.99+snapshot/sysroots/x86_64-pokysdk-linux/usr/libexec/x86_64-poky-linux/gcc/x86_64-poky-linux/15.2.0/lto-wrapper
+Target: x86_64-poky-linux
+Configured with: ../../../../../../work-shared/gcc-15.2.0-r0/sources/gcc-15.2.0/configure --build=x86_64-linux --host=x86_64-pokysdk-linux --target=x86_64-poky-linux --prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr --exec_prefix=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr --bindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/bin/x86_64-poky-linux --sbindir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/bin/x86_64-poky-linux --libexecdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/libexec/x86_64-poky-linux --datadir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/share --sysconfdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/etc --sharedstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/com --localstatedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/var --libdir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/lib/x86_64-poky-linux --includedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/include --oldincludedir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/include --infodir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/share/info --mandir=/usr/local/oe-sdk-hardcoded-buildpath/sysroots/x86_64-pokysdk-linux/usr/share/man --disable-silent-rules --disable-dependency-tracking --with-gnu-ld --enable-shared --enable-languages=c,c++ --enable-threads=posix --enable-multilib --enable-default-pie --enable-c99 --enable-long-long --enable-symvers=gnu --enable-libstdcxx-pch --program-prefix=x86_64-poky-linux- --without-local-prefix --disable-install-libiberty --disable-libssp --enable-libitm --enable-lto --disable-bootstrap --with-system-zlib --with-linker-hash-style=gnu --enable-linker-build-id --with-ppl=no --with-cloog=no --enable-checking=release --enable-cheaders=c_global --without-isl --with-gxx-include-dir=/not/exist/usr/include/c++/15.2.0 --with-gxx-libcxx-include-dir=/not/exist/usr/include/c++/v1 --with-build-time-tools=/host-native/usr/x86_64-poky-linux/bin --with-sysroot=/not/exist --with-build-sysroot=/host --with-plugin-ld=ld --enable-poison-system-directories --disable-static --enable-nls --with-glibc-version=2.28 --enable-initfini-array --enable-__cxa_atexit
+Thread model: posix
+Supported LTO compression algorithms: zlib zstd
+gcc version 15.2.0 (GCC) 
+
+```
+
+
+app/hello_word.c
+```
+#include <stdio.h>
+
+int main(void)
+{
+	printf("hello world!\r\n");
+	return 0;
+}
+```
+
+编译需要--sysroot, 直接用 $CC 即可
+```
+$ x86_64-poky-linux-gcc hello_word.c -o hello_world
+
+hello_word.c:2:10: fatal error: stdio.h: No such file or directory
+    2 | #include <stdio.h>
+      |          ^~~~~~~
+```
+
+
+$CC 已经包含了 --sysroot 等必要参数，不需要手动写
+```
+$ echo $CC
+x86_64-poky-linux-gcc -m64 -march=x86-64-v3 -fstack-protector-strong -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/5.2.99+snapshot/sysroots/x86-64-v3-poky-linux
+```
+
+正常的编译成功
+```
+$ $CC hello_word.c -o hello_word
+```
+
+
+静态编译不能
+```
+$ $CC -static hello_word.c -o hello_word 
+/opt-shadow/poky/5.2.99+snapshot/sysroots/x86_64-pokysdk-linux/usr/bin/x86_64-poky-linux/../../libexec/x86_64-poky-linux/gcc/x86_64-poky-linux/15.2.0/ld: cannot find -lc: No such file or directory
+/opt-shadow/poky/5.2.99+snapshot/sysroots/x86_64-pokysdk-linux/usr/bin/x86_64-poky-linux/../../libexec/x86_64-poky-linux/gcc/x86_64-poky-linux/15.2.0/ld: have you installed the static version of the c library ?
+collect2: error: ld returned 1 exit status
+```
+
+
+宿主机运行不能
+```
+$ file hello_word
+hello_word: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-x86-64.so.2, BuildID[sha1]=803e122fd6fc133499cd4d9109af7ae95f3f0d8c, for GNU/Linux 5.15.0, with debug_info, not stripped
+
+$ ./hello_word 
+bash: ./hello_word: No such file or directory
+```
+
+
+## ssh发文件方法1
+
+runqemu 默认用的是 tap0 直连方式, QEMU 里 guest IP 是 192.168.7.2
+```
+$ runqemu qemux86-64 qemuparams="-enable-kvm" snapshot
+runqemu - INFO - Running MACHINE=qemux86-64 bitbake -e  ...
+runqemu - WARNING - Found existing decompressed image: /home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.ext4, Using it directly.
+runqemu - INFO - Continuing with the following parameters:
+KERNEL: [/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/bzImage]
+MACHINE: [qemux86-64]
+FSTYPE: [ext4]
+ROOTFS: [/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.ext4]
+SNAPSHOT: [Enabled. Changes on rootfs won't be kept after QEMU shutdown.]
+CONFFILE: [/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.qemuboot.conf]
+
+runqemu - INFO - Using preconfigured tap device tap0
+runqemu - INFO - If this is not intended, touch /tmp/qemu-tap-locks/tap0.skip to make runqemu skip tap0.
+runqemu - INFO - Network configuration: ip=192.168.7.2::192.168.7.1:255.255.255.0::eth0:off:8.8.8.8 net.ifnames=0
+runqemu - INFO - Running /home/andy/Downloads/mywork/build/tmp/work/x86_64-linux/qemu-helper-native/1.0/recipe-sysroot-native/usr/bin/qemu-system-x86_64 -device virtio-net-pci,netdev=net0,mac=52:54:00:12:34:02 -netdev tap,id=net0,ifname=tap0,script=no,downscript=no -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 -drive file=/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.ext4,if=virtio,format=raw -usb -device usb-tablet -usb -device usb-kbd   -cpu Skylake-Client -machine q35,i8042=off -smp 4 -m 512  -enable-kvm -snapshot -serial mon:vc -serial null -device virtio-vga  -display sdl,show-cursor=on  -kernel /home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/bzImage -append 'root=/dev/vda rw  ip=192.168.7.2::192.168.7.1:255.255.255.0::eth0:off:8.8.8.8 net.ifnames=0 oprofile.timer=1 tsc=reliable no_timer_check rcupdate.rcu_expedited=1 swiotlb=0 '
+
+runqemu - INFO - Host uptime: 126712.64
+```
+
+
+主机端登录 QEMU
+```
+andy@andy-kuangshi16:~/Downloads/app
+$ ssh root@192.168.7.2
+The authenticity of host '192.168.7.2 (192.168.7.2)' can't be established.
+RSA key fingerprint is SHA256:PMBbj3jhGOQAESoiZr8p3Y3kqxiAwKcsbvjvyKRu/lI.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.7.2' (RSA) to the list of known hosts.
+
+WARNING: Poky is a reference Yocto Project distribution that should be used for
+testing and development purposes only. It is recommended that you create your
+own distribution for production use.
+
+xauth:  file /home/root/.Xauthority does not exist
+root@qemux86-64:~# 
+```
+
+
+宿主机给QEMU发文件
+```
+$ scp hello_word root@192.168.7.2:/home/root
+```
+
+## ssh发文件方法2
+
+slirp 模式运行, 有 127.0.0.1:2222 → guest:22 的转发
+```
+$ runqemu qemux86-64 qemuparams="-enable-kvm" snapshot slirp
+runqemu - INFO - Running MACHINE=qemux86-64 bitbake -e  ...
+runqemu - WARNING - Found existing decompressed image: /home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.ext4, Using it directly.
+runqemu - INFO - Continuing with the following parameters:
+KERNEL: [/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/bzImage]
+MACHINE: [qemux86-64]
+FSTYPE: [ext4]
+ROOTFS: [/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.ext4]
+SNAPSHOT: [Enabled. Changes on rootfs won't be kept after QEMU shutdown.]
+CONFFILE: [/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.qemuboot.conf]
+
+runqemu - INFO - Network configuration: ip=dhcp
+runqemu - INFO - Port forward: hostfwd=tcp:127.0.0.1:2222-:22 hostfwd=tcp:127.0.0.1:2323-:23
+runqemu - INFO - Running /home/andy/Downloads/mywork/build/tmp/work/x86_64-linux/qemu-helper-native/1.0/recipe-sysroot-native/usr/bin/qemu-system-x86_64 -device virtio-net-pci,netdev=net0,mac=52:54:00:12:35:02 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:2222-:22,hostfwd=tcp:127.0.0.1:2323-:23,tftp=/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 -drive file=/home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.ext4,if=virtio,format=raw -usb -device usb-tablet -usb -device usb-kbd   -cpu Skylake-Client -machine q35,i8042=off -smp 4 -m 512  -enable-kvm -snapshot -serial mon:vc -serial null -device virtio-vga  -display sdl,show-cursor=on  -kernel /home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/bzImage -append 'root=/dev/vda rw  ip=dhcp oprofile.timer=1 tsc=reliable no_timer_check rcupdate.rcu_expedited=1 swiotlb=0 '
+
+runqemu - INFO - Host uptime: 127047.97
+
+```
+
+
+测试宿主机ssh登录QEMU
+```
+ssh -p 2222 root@127.0.0.1
+```
+
+
+
+宿主机给QEMU发文件
+```
+
+scp -P 2222 hello_word root@127.0.0.1:/home/root/
+```
+
+
+
+
+## NFS挂载
+
+QEMU客户机
+```
+mkdir -p /mnt/hostfs
+mount -t nfs 192.168.7.1:/home/andy/targetfs /mnt/hostfs
+```
+
+
+tips: 镜像没有 net-tools 包（所以没有 ifconfig），只有 iproute2，可以用：
+```
+ip addr
+ip route
+```
+来查看网络状态
+
+
+tips: 宿主机配置 NFS 导出
+```
+sudo apt install nfs-kernel-server
+编辑 /etc/exports，添加一行：
+/home/andy/targetfs 192.168.7.0/24(rw,sync,no_subtree_check,no_root_squash)
+然后刷新配置：
+sudo exportfs -ra
+确认 NFS 服务正常：
+showmount -e localhost
+输出里应该有 /home/andy/targetfs.
+```
 
 
 
 
 
+## NFS自动挂载
+
+如果想启动后自动挂载，可以在 guest 里 /etc/fstab 添加. 重新构建镜像后失效
+```
+192.168.7.1:/home/andy/targetfs   /mnt/hostfs   nfs   defaults   0  0
+```
 
 
+如果要重新构建镜像后也自动挂载
 
+meta-mylayer/recipes-core/base-files/base-files_%.bbappend
+```
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI += "file://fstab"
+```
 
+meta-mycustom/recipes-core/base-files/files/fstab 写完整的 fstab
+```
+# /etc/fstab: static file system information
+/dev/root      /               auto       defaults           1  1
+proc           /proc           proc       defaults           0  0
+devpts         /dev/pts        devpts     mode=0620,gid=5    0  0
+tmpfs          /dev/shm        tmpfs      defaults           0  0
+192.168.7.1:/home/andy/targetfs   /mnt/hostfs   nfs   defaults   0  0
+```
 
-
-
-
-
-
-
+然后重新构建镜像
+```
+bitbake core-image-sato
+```
 
 
 
