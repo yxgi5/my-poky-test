@@ -179,8 +179,10 @@ $ bitbake core-image-sato
 
 $ runqemu qemux86-64
 $ runqemu qemux86-64 nographic
-$ runqemu qemux86-64 qemuparams="-enable-kvm"       # 经常用这个
+$ runqemu qemux86-64 qemuparams="-enable-kvm"       
+$ runqemu qemux86-64 kvm                            # 经常用这个
 $ runqemu qemux86-64 core-image-sato ext4 qemuparams="-enable-kvm"
+$ runqemu qemux86-64 core-image-sato ext4 kvm
 ```
 
 ## 目录结构规划
@@ -1641,6 +1643,7 @@ runqemu qemux86-64 snapshot
 或者
 ```
 runqemu qemux86-64 qemuparams="-enable-kvm" snapshot
+runqemu qemux86-64 kvm snapshot
 ```
 
 
@@ -1833,7 +1836,8 @@ bash: ./hello_word: No such file or directory
 
 runqemu 默认用的是 tap0 直连方式, QEMU 里 guest IP 是 192.168.7.2
 ```
-$ runqemu qemux86-64 qemuparams="-enable-kvm" snapshot
+//$ runqemu qemux86-64 qemuparams="-enable-kvm" snapshot
+$ runqemu qemux86-64 kvm snapshot
 runqemu - INFO - Running MACHINE=qemux86-64 bitbake -e  ...
 runqemu - WARNING - Found existing decompressed image: /home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.ext4, Using it directly.
 runqemu - INFO - Continuing with the following parameters:
@@ -1881,7 +1885,8 @@ $ scp hello_word root@192.168.7.2:/home/root
 
 slirp 模式运行, 有 127.0.0.1:2222 → guest:22 的转发
 ```
-$ runqemu qemux86-64 qemuparams="-enable-kvm" snapshot slirp
+//$ runqemu qemux86-64 qemuparams="-enable-kvm" snapshot slirp
+$ runqemu qemux86-64 kvm snapshot slirp
 runqemu - INFO - Running MACHINE=qemux86-64 bitbake -e  ...
 runqemu - WARNING - Found existing decompressed image: /home/andy/Downloads/mywork/build/tmp/deploy/images/qemux86-64/core-image-sato-qemux86-64.rootfs-20250930135346.ext4, Using it directly.
 runqemu - INFO - Continuing with the following parameters:
