@@ -8,4 +8,15 @@ require recipes-sato/images/core-image-sato.bb
 inherit core-image
 
 IMAGE_INSTALL:append = " helloworld"
+IMAGE_INSTALL:append = " helloworld2"
+IMAGE_INSTALL:append = " hellocmake"
+IMAGE_INSTALL:append = " helloauto"
+IMAGE_INSTALL:append = " helloauto2"
+IMAGE_INSTALL:append = " hellom"
+#可以写成一行
+#IMAGE_INSTALL:append = " helloworld helloworld2 hellocmake helloauto helloauto2 hellom"
 
+# 在这并没有效果
+#KERNEL_MODULE_AUTOLOAD += " hellom"  
+# 注意冒号和 append, 在这并没有效果
+#KERNEL_MODULE_AUTOLOAD:append = " hellom"  

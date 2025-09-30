@@ -2,18 +2,22 @@ DESCRIPTION = "Simple Hello World 2 example"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_URI = " \ 
-    file://main.c \
-    file://helloworld.c \
-    file://Makefile \
-    "
+#SRC_URI = " \ 
+#    file://main.c \
+#    file://helloworld.c \
+#    file://Makefile \
+#    "
+
+SRC_URI = "file://helloworld"
 
 #S = "${WORKDIR}"
 #S = "${WORKDIR}/helloworld"
 #S = "${UNPACKDIR}"
 
-S = "${WORKDIR}/helloworld"
-UNPACKDIR = "${S}"
+#S = "${WORKDIR}/helloworld"
+#UNPACKDIR = "${S}"
+
+S = "${UNPACKDIR}/helloworld"
 
 # inherit autotools
 # inherit autotools-brokensep
@@ -27,4 +31,4 @@ do_install() {
     oe_runmake DESTDIR=${D}/${bindir} install
 }
 
-RDEPENDS:${PN} += "helloworld2"
+#RDEPENDS:${PN} += "helloworld2"

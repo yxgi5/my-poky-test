@@ -1,4 +1,4 @@
-obj-m := hello.o
+obj-m := hellom.o
 
 SRC := $(shell pwd)
 
@@ -6,6 +6,7 @@ all:
 	$(MAKE) -C $(KERNEL_SRC) M=$(SRC)
 
 modules_install:
+	#$(MAKE) -C $(KERNEL_SRC) M=$(SRC) INSTALL_MOD_PATH=$(DESTDIR) modules_install
 	$(MAKE) -C $(KERNEL_SRC) M=$(SRC) modules_install
 
 clean:

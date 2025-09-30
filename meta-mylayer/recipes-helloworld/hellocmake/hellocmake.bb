@@ -5,7 +5,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 # 把整个 hellocmake 目录当源码
 SRC_URI = "file://hellocmake"
 
-S = "${WORKDIR}/hellocmake"
+#S = "${WORKDIR}/hellocmake"
+S = "${UNPACKDIR}/hellocmake"
 
 inherit cmake
 

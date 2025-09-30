@@ -10,7 +10,8 @@ SRC_URI[md5sum] = "00000000000000000000000000000000"
 SRC_URI[sha256sum] = "0000000000000000000000000000000000000000000000000000000000000000"
 
 # 指向解压后的源码目录
-S = "${WORKDIR}/helloauto-src"
+# S = "${WORKDIR}/helloauto-src"
+S = "${UNPACKDIR}/helloauto-src"
 
 # 继承 Autotools 类
 inherit autotools pkgconfig
