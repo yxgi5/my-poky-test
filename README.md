@@ -1717,6 +1717,11 @@ $ tree
 ```
 bitbake -c clean core-image-sato
 bitbake -c populate_sdk core-image-sato
+
+
+bitbake buildtools-tarball                      # 可先clean
+bitbake buildtools-extended-tarball
+bitbake -c populate_sdk_ext core-image-sato
 ```
 
 ## 安装SDK, 先`unset LD_LIBRARY_PATH`
@@ -1985,6 +1990,8 @@ tmpfs          /dev/shm        tmpfs      defaults           0  0
 ```
 bitbake core-image-sato
 ```
+
+
 
 
 
